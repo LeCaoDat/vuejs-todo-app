@@ -17,7 +17,7 @@
           </div>
           <hr>
           <ul id="sortable" class="list-unstyled">
-            <task-not-done v-for="(task, index) in tasksNotDone" :key="index" :task="task">
+            <task-not-done v-for="(task, index) in tasksNotDone" :key="index" :task="task" @handle-error="handleError">
             </task-not-done>
           </ul>
           <div class="todo-footer">
@@ -81,6 +81,9 @@ export default {
         },
         error => { this.allError.push(error.message) }
       )
+    },
+    handleError (error) {
+      this.allError.push(error)
     }
   }
 }
