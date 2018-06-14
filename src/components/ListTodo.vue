@@ -1,13 +1,23 @@
 <template>
   <div class="container">
     <div class="row">
+      <div class="col-md-12 pt-5">
+        <alert v-for="(error, index) in allError" :error="error" :key="index"></alert>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-md-6">
         <div class="todolist not-done">
           <h1>Todos</h1>
-          <input type="text" class="form-control add-task" placeholder="Add task">
+          <input type="text" class="form-control add-task" placeholder="Add task"
+            v-model="newTask.content" @keyup.enter="createTask" v-validate="{required: true, regex: /^[a-zA-Z\s]+$/}"
+            name="content" :class="{'is-invalid': errors.first('content')}" >
+          <div v-show="errors.first('content')" class="invalid-feedback">
+            {{ errors.first('content') }}
+          </div>
           <hr>
           <ul id="sortable" class="list-unstyled">
-            <task-not-done v-for="(task, index) in tasksNotDone" v-bind:key="index" v-bind:task="task">
+            <task-not-done v-for="(task, index) in tasksNotDone" :key="index" :task="task">
             </task-not-done>
           </ul>
           <div class="todo-footer">
@@ -19,7 +29,7 @@
         <div class="todolist">
           <h1>Already Done</h1>
           <ul id="done-items">
-            <task-done v-for="(task, index) in tasksDone" v-bind:key="index" v-bind:task="task">
+            <task-done v-for="(task, index) in tasksDone" :key="index" :task="task">
             </task-done>
           </ul>
         </div>
@@ -32,22 +42,46 @@
 import TodoService from '@/services/todo'
 import TaskNotDone from '@/components/TaskNotDone'
 import TaskDone from '@/components/TaskDone'
+import Alert from '@/components/Alert'
 export default {
   name: 'ListTodo',
-  components: {TaskNotDone, TaskDone},
+  components: {TaskNotDone, TaskDone, Alert},
   data () {
     return {
-      tasks: []
+      tasks: [],
+      newTask: {content: ''},
+      allError: []
     }
   },
   created () {
-    TodoService.getTodoList().then((tasks) => {
-      this.tasks = tasks
-    })
+    this.getListTodo()
   },
   computed: {
     tasksNotDone () { return this.tasks.filter(task => !task.is_done) },
     tasksDone () { return this.tasks.filter(task => task.is_done) }
+  },
+  methods: {
+    createTask (event) {
+      if (!this.errors.first('content')) {
+        TodoService.createTask(this.newTask)
+          .then(
+            response => {
+              this.newTask = {content: ''}
+              this.tasks.push(response)
+              this.errors.items = []
+            },
+            error => { this.allError.push(error.message) }
+          )
+      }
+    },
+    getListTodo () {
+      TodoService.getTodoList().then(
+        tasks => {
+          this.tasks = tasks
+        },
+        error => { this.allError.push(error.message) }
+      )
+    }
   }
 }
 </script>
@@ -66,9 +100,6 @@ body{
   margin: 0;
   padding-bottom: 20px;
   text-align: center;
-}
-.form-control{
-  border-radius: 0;
 }
 li.ui-state-default{
   background:#fff;
