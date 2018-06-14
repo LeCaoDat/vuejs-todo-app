@@ -17,7 +17,7 @@
           </div>
           <hr>
           <ul id="sortable" class="list-unstyled">
-            <task-not-done v-for="(task, index) in tasksNotDone" :key="index" :task="task" @handle-error="handleError">
+            <task-not-done v-for="task in tasksNotDone" :key="task.id" :task="task" @handle-error="handleError">
             </task-not-done>
           </ul>
           <div class="todo-footer">
@@ -29,7 +29,7 @@
         <div class="todolist">
           <h1>Already Done</h1>
           <ul id="done-items">
-            <task-done v-for="(task, index) in tasksDone" :key="index" :task="task">
+            <task-done v-for="task in tasksDone" :key="task.id" :task="task" @handle-error="handleError" @delete-task="deleteTask">
             </task-done>
           </ul>
         </div>
@@ -81,6 +81,12 @@ export default {
         },
         error => { this.allError.push(error.message) }
       )
+    },
+    deleteTask (task) {
+      var index = this.tasks.indexOf(task)
+      if (index !== -1) {
+        this.tasks.splice(index, 1)
+      }
     },
     handleError (error) {
       this.allError.push(error)
