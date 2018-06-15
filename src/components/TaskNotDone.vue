@@ -7,7 +7,7 @@
       <button class="btn btn-default">
         <i class="fa fa-edit"></i>
       </button>
-      <button class="btn btn-default">
+      <button class="btn btn-default" @click="setDone">
         <i class="fa fa-check"></i>
       </button>
     </div>
@@ -15,13 +15,29 @@
 </template>
 
 <script>
+import TodoService from '@/services/todo'
 export default {
   name: 'TaskNotDone',
+  props: {
+    task: Object
+  },
   data () {
     return {
     }
   },
-  props: ['task']
+  methods: {
+    setDone () {
+      TodoService.setDone(this.task)
+        .then(
+          task => {
+            this.task.is_done = task.is_done
+          },
+          error => {
+            this.$emit('handle-error', error.message)
+          }
+        )
+    }
+  }
 }
 </script>
 
