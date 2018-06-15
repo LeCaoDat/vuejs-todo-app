@@ -30,5 +30,12 @@ export default {
         axios.delete(`${TODO_URL}tasks/${task.id}`).then(response => resolve(response.data), reject)
       }
     )
+  },
+  updateTask (task) {
+    return new Promise(
+      (resolve, reject) => {
+        axios.put(`${TODO_URL}tasks/${task.id}`, {task: task}).then(response => resolve(response.data), reject)
+      }
+    )
   }
 }
