@@ -29,7 +29,7 @@
         <div class="todolist">
           <h1>Already Done</h1>
           <ul id="done-items">
-            <task-done v-for="task in tasksDone" :key="task.id" :task="task" @handle-error="handleError" @delete-task="deleteTask">
+            <task-done v-for="task in tasksDone" :key="task.id" :task="task" @handle-error="handleError">
             </task-done>
           </ul>
         </div>
@@ -39,57 +39,49 @@
 </template>
 
 <script>
-import TodoService from '@/services/todo'
 import TaskNotDone from '@/components/TaskNotDone'
 import TaskDone from '@/components/TaskDone'
 import Alert from '@/components/Alert'
+import {mapState, mapGetters, mapActions} from 'vuex'
 export default {
   name: 'ListTodo',
   components: {TaskNotDone, TaskDone, Alert},
   data () {
     return {
-      tasks: [],
-      newTask: {content: ''},
-      allError: []
+      newTask: {content: ''}
     }
   },
   created () {
     this.getListTodo()
   },
   computed: {
-    tasksNotDone () { return this.tasks.filter(task => !task.is_done) },
-    tasksDone () { return this.tasks.filter(task => task.is_done) }
+    ...mapState({
+      tasks: 'tasks',
+      allError: 'errors'
+    }),
+    ...mapGetters([
+      'tasksNotDone',
+      'tasksDone',
+      'taskNotDoneCount'
+    ])
   },
   methods: {
+    ...mapActions([
+      'getListTodo',
+      'addTask',
+      'addError'
+    ]),
     createTask (event) {
-      if (!this.errors.first('content')) {
-        TodoService.createTask(this.newTask)
-          .then(
-            response => {
-              this.newTask = {content: ''}
-              this.tasks.push(response)
-              this.errors.items = []
-            },
-            error => { this.allError.push(error.message) }
-          )
-      }
-    },
-    getListTodo () {
-      TodoService.getTodoList().then(
-        tasks => {
-          this.tasks = tasks
-        },
-        error => { this.allError.push(error.message) }
-      )
-    },
-    deleteTask (task) {
-      var index = this.tasks.indexOf(task)
-      if (index !== -1) {
-        this.tasks.splice(index, 1)
-      }
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          this.addTask(this.newTask)
+        } else {
+          this.handleError('False form validation')
+        }
+      })
     },
     handleError (error) {
-      this.allError.push(error)
+      this.addError(error)
     }
   }
 }

@@ -25,7 +25,7 @@
       <button class="btn btn-default" @click="showEdit">
         <i class="fa fa-edit"></i>
       </button>
-      <button class="btn btn-default" @click="setDone">
+      <button class="btn btn-default" @click="setDoneTask(task)">
         <i class="fa fa-check"></i>
       </button>
     </div>
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import TodoService from '@/services/todo'
+import {mapActions} from 'vuex'
 export default {
   name: 'TaskNotDone',
   props: {
@@ -49,35 +49,25 @@ export default {
     }
   },
   methods: {
-    setDone () {
-      TodoService.setDone(this.task)
-        .then(
-          task => {
-            this.task.is_done = task.is_done
-          },
-          error => {
-            this.$emit('handle-error', error.message)
-          }
-        )
-    },
+    ...mapActions([
+      'setDoneTask',
+      'updateTask'
+    ]),
     showEdit () {
       this.edit = true
     },
     saveTask (event) {
-      if (!this.errors.first('content')) {
-        TodoService.updateTask({id: this.task.id, content: this.content}).then(
-          task => {
-            this.task.content = task.content
-            this.edit = false
-          },
-          error => {
-            this.$emit('handle-error', error.message)
-          }
-        )
-      }
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          this.updateTask({task: this.task, content: this.content, hideEdit: this.hideEdit})
+        }
+      })
     },
     cancel () {
       this.content = this.task.content
+      this.hideEdit()
+    },
+    hideEdit () {
       this.edit = false
     }
   }
