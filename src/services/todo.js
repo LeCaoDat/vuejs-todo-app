@@ -23,5 +23,12 @@ export default {
         axios.put(`${TODO_URL}tasks/${task.id}`, {task: {is_done: true}}).then(response => resolve(response.data), reject)
       }
     )
+  },
+  deleteTask (task) {
+    return new Promise(
+      (resolve, reject) => {
+        axios.delete(`${TODO_URL}tasks/${task.id}`).then(response => resolve(response.data), reject)
+      }
+    )
   }
 }
