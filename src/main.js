@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import VeeValidate from 'vee-validate'
 import VuejsDialog from 'vuejs-dialog'
+import store from '@/store/index'
 
 Vue.use(VuejsDialog)
 Vue.use(VeeValidate)
@@ -18,6 +19,7 @@ Vue.use(BootstrapVue)
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

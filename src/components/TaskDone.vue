@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import TodoService from '@/services/todo'
+import { mapActions } from 'vuex'
 export default {
   name: 'TaskDone',
   props: {
@@ -21,18 +21,14 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'deleteTask'
+    ]),
     showModal () {
       this.$dialog.confirm('Do you want to delete this task?', {okText: 'Delete', cancelText: 'Cancel'})
         .then(
           confirm => {
-            TodoService.deleteTask(this.task).then(
-              task => {
-                this.$emit('delete-task', this.task)
-              },
-              error => {
-                this.$emit('handle-error', error.message)
-              }
-            )
+            this.deleteTask(this.task)
           },
           reject => {}
         )
