@@ -12,7 +12,9 @@ export const deleteTask = (state, task) => {
 }
 export const updateTask = (state, payload) => {
   payload.task.content = payload.content
-  payload.hideEdit.call()
+  if (payload.hideEdit) {
+    payload.hideEdit.call()
+  }
 }
 export const setDoneTask = (state, task) => {
   task.is_done = true
