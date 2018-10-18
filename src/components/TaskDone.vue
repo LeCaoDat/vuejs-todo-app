@@ -6,18 +6,23 @@
     <div class="col-md-2">
       <button class="btn btn-default" @click="showModal"><i class="fa fa-times"></i></button>
     </div>
+    <modal v-if="show" @confirm="confirm" @cancel="cancel" :type="'danger'"
+      :message="'Do you want to delete this task?'" :cancelText="'Cancel'" :okText="'Delete'"></modal>
   </li>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
+import Modal from '@/components/modal/Modal'
 export default {
   name: 'TaskDone',
+  components: {Modal},
   props: {
     task: Object
   },
   data () {
     return {
+      show: false
     }
   },
   methods: {
@@ -25,13 +30,13 @@ export default {
       'deleteTask'
     ]),
     showModal () {
-      this.$dialog.confirm('Do you want to delete this task?', {okText: 'Delete', cancelText: 'Cancel'})
-        .then(
-          confirm => {
-            this.deleteTask(this.task)
-          },
-          reject => {}
-        )
+      this.show = true
+    },
+    confirm () {
+      this.deleteTask(this.task)
+    },
+    cancel () {
+      this.show = false
     }
   }
 }

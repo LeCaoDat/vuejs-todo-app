@@ -1,7 +1,7 @@
 <template>
   <li class="row ui-state-default">
     <div class="col-md-9">
-      <div v-if="edit" class="pb-1">
+      <div v-show="edit" class="pb-1">
         <input class="form-control" type="text" name="content" v-model="content"
           v-validate="{required: true, regex: /^[a-zA-Z\s]+$/}"
           :class="{'is-invalid': errors.first('content')}">
@@ -9,23 +9,23 @@
           {{ errors.first('content') }}
         </div>
       </div>
-      <template v-else>
+      <span class="form-control borderless" v-show="!edit">
         {{ task.content }}
-      </template>
+      </span>
     </div>
     <div v-if="edit" class="col-md-3 text-center">
-      <button class="btn btn-default" @click="saveTask" :disabled="errors.first('content')">
+      <button class="btn btn-default save-task" @click="saveTask" :disabled="errors.first('content')">
         <i class="fa fa-save"></i>
       </button>
-      <button class="btn btn-default" @click="cancel">
+      <button class="btn btn-default cancel" @click="cancel">
         <i class="fa fa-times"></i>
       </button>
     </div>
-    <div v-else>
-      <button class="btn btn-default" @click="showEdit">
+    <div class="col-md-3 text-center" v-else>
+      <button class="btn btn-default show-edit" @click="showEdit">
         <i class="fa fa-edit"></i>
       </button>
-      <button class="btn btn-default" @click="setDoneTask(task)">
+      <button class="btn btn-default set-done" @click="setDoneTask(task)">
         <i class="fa fa-check"></i>
       </button>
     </div>
@@ -76,4 +76,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.borderless {
+  border: none;
+}
 </style>

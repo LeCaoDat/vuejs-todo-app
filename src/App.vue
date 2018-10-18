@@ -17,8 +17,4 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
-.dg-btn--ok {
-  color: #dc3545;
-  border-color: #dc3545;
-}
 </style>

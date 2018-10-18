@@ -21,7 +21,7 @@
             </task-not-done>
           </ul>
           <div class="todo-footer">
-            <strong><span class="count-todos">{{ tasksNotDone.length }}</span></strong> Items Left
+            <strong><span class="count-todos">{{ tasksNotDoneCount }}</span></strong> Items Left
           </div>
         </div>
       </div>
@@ -62,7 +62,7 @@ export default {
     ...mapGetters([
       'tasksNotDone',
       'tasksDone',
-      'taskNotDoneCount'
+      'tasksNotDoneCount'
     ])
   },
   methods: {
